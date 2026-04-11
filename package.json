@@ -1,0 +1,10 @@
+{
+  "name": "astra",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "install:all": "pnpm install",
+    "build": "pnpm run --recursive build",
+    "start": "pnpm run --recursive start"
+  }
+}
