@@ -1,7 +1,26 @@
 import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { ProjectsModule } from './projects/projects.module';
+import { TablesModule } from './tables/tables.module';
+import { Project } from './projects/entities/project.entity';
 
 @Module({
-  imports: [],
+  imports: [
+    TypeOrmModule.forRoot({
+      type: 'postgres',
+      host: process.env.DB_HOST || 'localhost',
+      port: parseInt(process.env.DB_PORT || '5432'),
+      username: process.env.DB_USERNAME || 'postgres',
+      password: process.env.DB_PASSWORD || 'postgres',
+      database: process.env.DB_NAME || 'forma',
+      entities: [Project],
+      synchronize: process.env.NODE_ENV !== 'production',
+      migrations: ['src/migrations/*.ts'],
+      migrationsRun: true,
+    }),
+    ProjectsModule,
+    TablesModule,
+  ],
   controllers: [],
   providers: [],
 })

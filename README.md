@@ -1,4 +1,4 @@
-# Astra
+# forma
 
 A monorepo project with React frontend, NestJS backend, and shared utilities.
 
@@ -9,13 +9,68 @@ A monorepo project with React frontend, NestJS backend, and shared utilities.
 - `packages/shared`: Shared types and utilities
 - `docs/`: Documentation
 
-## Getting Started
+## Prerequisites
 
-1. Install dependencies: `pnpm install`
-2. Start backend: `pnpm run --filter backend start:dev`
-3. Start frontend: `pnpm run --filter frontend start`
+- Node.js 16+ and pnpm installed
+- PostgreSQL running locally
+- pgAdmin for database management (optional)
 
-## Local Development
+## Local Development Setup
 
-- PostgreSQL should be running locally.
-- Use pgAdmin for database management.
+### 1. Install Dependencies
+
+```bash
+pnpm install
+```
+
+### 2. Database Setup
+
+Create a local PostgreSQL database:
+
+```bash
+createdb forma
+```
+
+If you have custom credentials, update `.env.local` with your database configuration.
+
+### 3. Environment Variables
+
+Copy `.env.example` to `.env.local` and update if needed:
+
+```bash
+cp .env.example .env.local
+```
+
+### 4. Start the Applications
+
+**Terminal 1 — Backend (http://localhost:3001):**
+```bash
+pnpm run --filter backend start:dev
+```
+
+**Terminal 2 — Frontend (http://localhost:3000):**
+```bash
+pnpm run --filter frontend start
+```
+
+## Features
+
+### Projects
+- Create, view, and manage projects
+- Draft and published project statuses
+- Inline project name editing
+- Delete draft projects
+
+## Building for Production
+
+```bash
+pnpm run build
+```
+
+## Documentation
+
+See `docs/` for detailed documentation on:
+- `requirements.md` — operating manual and conventions
+- `database.md` — database schema and design decisions
+- `functions.md` — product behavior and rules
+- `features/` — feature specifications and implementation plans

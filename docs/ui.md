@@ -1,154 +1,402 @@
-# UI Design
+# UI Design System
 
-## Overview
+Forma is a tool for business teams — HR, operations, finance. The UI must feel serious, trustworthy, and data-dense. It gets out of the way of the data. Clean whites, neutral grays, a dark sidebar, and subtle borders. Professional without being sterile.
 
-Two distinct experiences: Admin (configuration) and User (interaction). Admin experience should feel like Excel. User experience should feel like a clean internal tool.
-
----
-
-## Admin Experience
-
-### 1. Projects List
-- Simple list of projects with status badges (Draft / Published)
-- Create new project button
-- Click project → go to project workspace
+Read this fully before writing any frontend code. Every UI decision must be consistent with this document.
 
 ---
 
-### 2. Project Workspace
-Tabbed layout:
+## Design Principles
+
+1. **Data first** — the interface exists to show and collect data. Nothing decorative that doesn't serve that purpose.
+2. **Density over whitespace** — business users work with a lot of data. Use space efficiently.
+3. **Predictable over clever** — interactions behave exactly as expected. No surprises.
+4. **Errors are clear** — validation errors, formula errors, and routing failures must be impossible to miss.
+5. **Admin and user feel different** — the admin configuration experience is more complex and technical. The user experience is clean and focused.
+
+---
+
+## Global Rules — Apply to Every Page
+
+These rules apply to every page in the application without exception. They do not need to be repeated in individual feature specs.
+
+### Breadcrumbs
+Every page must show breadcrumbs at the top of the content area, below the page header. Breadcrumbs show the full path to the current page and each segment is clickable.
 
 ```
-[ Tables ]  [ Master Table ]  [ Users ]  [ Publish ]
+Projects > Offers Tool > Master Table
+```
+
+- Root is always "Projects" linking to the projects list
+- Segments are separated by ">"
+- Current page segment is not clickable
+- Font size: 12px, color: `--color-text-secondary`
+- Clickable segments: `--color-brand` on hover
+
+### Back Button
+Every page that is not the root (projects list) must have a back button. The back button sits to the left of the page title in the page header. It is a ghost button with a left arrow icon. It navigates to the logical parent page — not necessarily browser history.
+
+```
+← Projects       (from project workspace)
+← Offers Tool    (from a section within a project)
 ```
 
 ---
 
-### 3. Tables Tab
-- Upload CSV button
-- List of uploaded tables with column previews
-- Click table → see raw data in AG Grid (read only)
-- Admin can rename tables and columns
+## Color Palette
+
+```css
+/* Background */
+--color-bg-base: #F9FAFB;
+--color-bg-surface: #FFFFFF;
+--color-bg-sidebar: #1E1E2E;
+--color-bg-sidebar-hover: #2A2A3E;
+--color-bg-subtle: #F3F4F6;
+
+/* Border */
+--color-border: #E5E7EB;
+--color-border-strong: #D1D5DB;
+
+/* Text */
+--color-text-primary: #111827;
+--color-text-secondary: #6B7280;
+--color-text-disabled: #9CA3AF;
+--color-text-sidebar: #C9D1D9;
+--color-text-sidebar-active: #FFFFFF;
+
+/* Brand */
+--color-brand: #4F46E5;
+--color-brand-hover: #4338CA;
+--color-brand-light: #EEF2FF;
+
+/* Status */
+--color-success: #16A34A;
+--color-success-light: #DCFCE7;
+--color-warning: #D97706;
+--color-warning-light: #FEF3C7;
+--color-error: #DC2626;
+--color-error-light: #FEE2E2;
+--color-info: #2563EB;
+--color-info-light: #DBEAFE;
+```
 
 ---
 
-### 4. Master Table Tab
-This is the core admin experience. Three sections:
+## Typography
 
-**Section A — Joins**
-Visual join builder. Admin picks:
-- Base table
-- Join table
-- Matching columns (dropdown on each side)
+```css
+--font-sans: 'Inter', system-ui, sans-serif;
+--font-mono: 'JetBrains Mono', 'Fira Code', monospace;
 
-Displays as a simple list of defined joins.
+--text-xs: 11px;
+--text-sm: 12px;
+--text-base: 14px;
+--text-md: 15px;
+--text-lg: 16px;
+--text-xl: 18px;
+--text-2xl: 22px;
 
-**Section B — Column Builder**
-A grid-like interface where admin adds columns one by one.
+--font-normal: 400;
+--font-medium: 500;
+--font-semibold: 600;
+--font-bold: 700;
+```
 
-Each row in the builder represents one master table column:
-
-| Column Name | Type | Config |
-|-------------|------|--------|
-| Job Role | Lookup | From: Bands Table → Job Role |
-| Base Midpoint | Mapped | From: Bands Table → Base Midpoint |
-| AY3 Mid | Formula | `= base_mid + (NHE * 25) + (AE * 50)` |
-| Base Actual | User Input | Type: Number |
-| Base Ratio | Formula | `= base_actual / AY3_mid` |
-
-Column types:
-- **Mapped** — pick source table and source column
-- **Formula** — text input with Excel-like formula bar
-- **User Input** — pick input type (text, number, dropdown, lookup)
-- **Lookup** — pick lookup table and key column
-
-Visibility and editability toggles on each column.
-
-**Section C — Formula Bar**
-When admin clicks a formula column, a larger formula input opens at the top (like Excel's formula bar). Shows column name autocomplete as admin types.
+All UI text is 14px by default. Labels are 12px. Page titles are 18px.
 
 ---
 
-### 5. Users Tab
-- List of users with their roles
-- Add user form (name, email, role)
-- Click user → configure which rows they can see/edit
-- Row assignment is manual at this stage
+## Layout
+
+### Shell
+```
+┌─────────────────────────────────────────────┐
+│  Sidebar (240px, dark)  │  Main Content Area │
+│                         │                    │
+│  - Project nav          │  - Page header     │
+│  - Section nav          │  - Breadcrumbs     │
+│                         │  - Content         │
+│                         │                    │
+└─────────────────────────────────────────────┘
+```
+
+- Sidebar: fixed, 240px, dark (`--color-bg-sidebar`)
+- Main content: fluid, white (`--color-bg-surface`)
+- Page header: 56px tall, bottom border, back button + page title left, primary actions right
+- Breadcrumbs: directly below page header, 12px, `--color-text-secondary`
+- Content area: 24px padding all sides
+
+### Admin Sidebar
+- Forma logo
+- Project switcher
+- Section links: Tables, Master Table, Users
+
+### User Sidebar
+- Forma logo
+- Project name
+- View switcher: Table View, Form View
 
 ---
 
-### 6. Publish Tab
-- Pre-publish checklist:
-  - [ ] At least one table uploaded
-  - [ ] Master table configured
-  - [ ] At least one user added
-  - [ ] All formulas valid
-- Publish button (disabled until checklist passes)
+## Spacing
+
+Base unit is 4px. Use multiples of 4.
+
+```
+4px  — xs
+8px  — sm
+12px — md
+16px — lg
+24px — xl
+32px — 2xl
+```
 
 ---
 
-## User Experience
+## Components
 
-### 1. Project Home
-User lands on their assigned project. Sees only what they have access to.
+### Buttons
+
+**Primary** — brand color, white text. One per page maximum.
+```
+background: --color-brand
+color: white
+padding: 8px 16px
+border-radius: 6px
+font-size: 14px
+font-weight: 500
+```
+
+**Secondary** — white, bordered.
+```
+background: white
+border: 1px solid --color-border-strong
+color: --color-text-primary
+padding: 8px 16px
+border-radius: 6px
+```
+
+**Destructive** — error color. Irreversible actions only.
+```
+background: --color-error
+color: white
+```
+
+**Ghost** — no background, no border. Toolbars, back button, tight spaces.
+```
+background: transparent
+color: --color-text-secondary
+hover background: --color-bg-subtle
+```
 
 ---
 
-### 2. Table View
-AG Grid showing only their visible rows and columns. Inline editing enabled on editable cells. Filter bar at top — filter by any visible column.
+### Inputs
 
-Submit button at the top right. Submitting transfers ownership to the approver.
+Base style for all inputs:
+```
+height: 36px
+border: 1px solid --color-border
+border-radius: 6px
+padding: 0 12px
+font-size: 14px
+background: white
+focus: border --color-brand, ring 2px --color-brand-light
+```
 
----
+**Formula Input** — monospace font, 40px tall, light gray background.
+```
+font: --font-mono 13px
+height: 40px
+background: #F6F8FA
+```
 
-### 3. Form View
-Alternative to table view. One row per screen. Shows only user_input and lookup columns as form fields. Mapped and formula columns shown as read-only display values (auto-populated).
-
-Lookup field behavior:
-- Renders as a dropdown
-- On selection, mapped columns auto-fill from resolved lookup
-- Formula columns recalculate instantly
-
-Submit button at the bottom.
-
----
-
-### 4. Approver View
-Same as table view but approver sees rows transferred to them. Actions per row:
-- Approve
-- Reject
-- Send Back (transfers row back to original user)
+**Error state** — border `--color-error`, error message below in 12px `--color-error`.
 
 ---
 
-## Component Notes
+### Table — AG Grid
 
-### AG Grid Configuration
-- Use Community Edition
-- Enable inline editing only on `is_editable: true` columns
-- Column definitions generated dynamically from master table config
-- `cellEditorSelector` used to render appropriate input per column type (text, number, dropdown)
-- Row data fetched from resolve endpoint — fully computed values
+All AG Grid instances follow these rules:
+
+```
+Row height: 40px
+Header height: 40px
+Font size: 14px
+Border color: --color-border
+Header background: --color-bg-subtle
+Header text: --color-text-secondary, font-weight 600
+```
+
+**Cell states:**
+- Read-only: background `--color-bg-subtle`
+- Editable: background `white`, inset border on focus
+- Error: background `--color-error-light`, red bottom border, tooltip on hover
+- Selected: background `--color-brand-light`
+
+Column definitions are always generated dynamically from master table config. Never hardcoded. Routing column is never passed to AG Grid — strip it before building column definitions.
+
+---
+
+### Badges
+
+```
+padding: 2px 8px
+border-radius: 4px
+font-size: 11px
+font-weight: 500
+```
+
+| Badge | Background | Text |
+|-------|------------|------|
+| Draft | `--color-bg-subtle` | `--color-text-secondary` |
+| Published | `--color-success-light` | `--color-success` |
+| Formula | `--color-brand-light` | `--color-brand` |
+| Mapped | `--color-bg-subtle` | `--color-text-secondary` |
+| User Input | `--color-warning-light` | `--color-warning` |
+| Lookup | `--color-info-light` | `--color-info` |
+
+Routing column badge is never shown to users.
+
+---
 
 ### Formula Bar
-- Simple controlled input
-- Column name autocomplete from current master table columns
-- Syntax highlighting nice to have, not required day one
 
-### Lookup Dropdown
-- On change → call lookup resolution API
-- Response auto-fills mapped columns in the current row
-- Show loading state while resolving
+Full-width input that appears when a formula column is selected in the column builder.
+
+```
+width: 100%
+height: 40px
+font: --font-mono 13px
+background: #F6F8FA
+border: 1px solid --color-border
+border-radius: 6px
+padding: 0 12px
+```
+
+Shows column name autocomplete as admin types.
 
 ---
 
-## View States
+### Sidebar
 
-| State | Description |
-|-------|-------------|
-| Loading | Skeleton rows in grid |
-| Empty | "No rows assigned" message |
-| Error | Formula error on a cell — show red highlight, tooltip with error |
-| Read Only | Cell grayed out, not clickable |
-| Editable | White cell, clickable |
-| Submitted | Row grayed out, submit button disabled |
+```
+width: 240px
+background: --color-bg-sidebar
+padding: 16px 0
+```
+
+**Logo area:** 56px tall, 16px padding, bottom border `rgba(255,255,255,0.08)`
+
+**Nav item:**
+```
+height: 36px
+padding: 0 16px
+font-size: 14px
+color: --color-text-sidebar
+border-radius: 6px
+margin: 0 8px
+```
+
+**Active nav item:**
+```
+background: --color-bg-sidebar-hover
+color: --color-text-sidebar-active
+font-weight: 500
+```
+
+---
+
+### Publish Button
+
+Publish is not a sidebar section. It is a button in the project workspace header, top right, next to the project status badge.
+
+- When project is draft and conditions are not met: button is disabled, shows "Publish" in secondary style
+- When project is draft and all conditions are met: button is enabled, shows "Publish" in primary style
+- When project is published: button changes to "Unpublish" in destructive style
+
+Publish conditions checklist is shown as a tooltip or dropdown on the disabled publish button so admin can see what is missing.
+
+---
+
+### Empty States
+
+Every list and table must handle empty state:
+- Short title: "No tables uploaded yet"
+- One-line description: "Upload a CSV to get started"
+- Primary action button if applicable
+
+No illustrations. No icons. Text and button only.
+
+---
+
+### Error States
+
+- **Inline field error** — 12px red text below the field
+- **Cell error** — red background tint, tooltip on hover with formula error
+- **Page error** — dismissible banner at top of content area in `--color-error-light`
+- **Publish validation** — tooltip/dropdown on disabled publish button listing unmet conditions
+
+---
+
+## Admin Pages
+
+### Projects List
+- Page header: "Projects" title, "New Project" primary button top right
+- No back button on this page — it is the root
+- No breadcrumbs on this page — it is the root
+- Grid of project cards: name, status badge, created date
+- Empty state if no projects
+
+### Project Workspace
+- Page header: back button (← Projects), project name (inline editable), status badge, Publish button top right
+- Breadcrumbs: Projects > Project Name
+- Sidebar sections: Tables, Master Table, Users, Audit
+- Each section is a placeholder for feature-specific UI
+
+### Tables Page
+- Breadcrumbs: Projects > Project Name > Tables
+- List of uploaded tables: name, column count, row count
+- Upload CSV button (primary)
+- Click table → read-only AG Grid of raw data
+
+### Master Table Page
+- Breadcrumbs: Projects > Project Name > Master Table
+- Three sections laid out vertically:
+  1. **Joins** — list of defined joins, add button
+  2. **Column Builder** — configuration grid. Each row is one master table column. Columns: Name, Type, Config, Visible, Editable, Actions
+  3. **Formula Bar** — appears when a formula column row is active
+
+### Users Page
+- Breadcrumbs: Projects > Project Name > Users
+- List of users: name, email, role
+- Upload users CSV button
+- Click user → side panel with row assignments and visibility/editability toggles per row
+
+---
+
+## User Pages
+
+### Table View
+- Breadcrumbs: Project Name > Table View
+- Full-width AG Grid
+- Filter bar above grid
+- Editable cells white, read-only cells gray
+- Submit button top right
+- Submitted rows become read-only immediately
+
+### Form View
+- Breadcrumbs: Project Name > Form View
+- One row per screen
+- Only user_input and lookup columns shown as form fields
+- Mapped and formula columns shown as read-only values below a divider
+- Lookup fields trigger auto-fill on selection
+- Formula values recalculate instantly when inputs change
+- Submit button at bottom
+- Previous / Next navigation for multiple rows
+
+---
+
+## Responsive Behaviour
+
+Forma is desktop-first. Minimum supported width is 1280px. Mobile is out of scope for this version.

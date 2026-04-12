@@ -17,86 +17,237 @@ Nobody learns a new tool. Nobody rebuilds their logic. The spreadsheet becomes a
 ## Core Concepts
 
 ### Project
-A project is a single workflow. It contains all the tables, configuration, users, and routing rules for one process. An admin creates and owns a project. A project starts as a draft and is published when ready. Users can only access published projects.
+
+A project is a single workflow. It contains all the tables, configuration, users, and routing rules for one process.
+
+* Created and owned by an admin
+* Starts in **draft**
+* Must be **published** before users can access
+* Users can only access published projects
+
+---
 
 ### Tables
-Admin uploads one or more CSVs into a project. Each CSV becomes a table. Tables are the raw reference data — the bands, the rates, the lookup values the workflow depends on. Tables are read-only after upload. Admin can re-upload to replace.
+
+Admin uploads one or more CSVs into a project. Each CSV becomes a table.
+
+* Source of truth for reference data
+* Read-only after upload
+* Can be replaced via re-upload
+* Used for joins, mapped columns, and lookups
+
+---
 
 ### Master Table
-The master table is the heart of a project. It is not a data table — it is a configuration that defines what the application looks like and how it behaves. Admin builds it by combining columns from uploaded tables, writing formula columns, and defining user input columns. This is what users interact with.
+
+The master table is the heart of a project.
+
+* Not a data table — a configuration layer
+* Defines:
+
+  * Columns
+  * Formulas
+  * User inputs
+  * Routing logic
+* Built by combining:
+
+  * Columns from tables
+  * Formula columns
+  * User input columns
+* This is the primary interface users interact with
+
+---
 
 ### Users
-Users are the people who participate in the workflow. They are uploaded by the admin as a CSV. Every user sees only the rows assigned to them, with only the columns the admin has permitted. A user fills in their inputs and submits. The row then moves to whoever is next in the workflow.
+
+Users participate in workflows.
+
+* Uploaded via CSV
+* Required fields: `id`, `name`, `email`
+* Additional fields stored as flexible user data
+* Users only see:
+
+  * Rows assigned to them
+  * Columns permitted to them
+
+---
 
 ### Rows
-A row is one record in the workflow. It carries all its values — reference data pulled from tables, user input filled in during the workflow, and a routing value that determines where it goes next. Rows move between users as the workflow progresses.
+
+A row is one record in the workflow.
+
+* Contains:
+
+  * Reference data (mapped)
+  * User inputs
+  * Computed values (formula)
+  * Routing value
+* Moves between users during workflow
+
+---
+
+## System Guarantees
+
+The system guarantees the following at all times:
+
+* A row may be assigned to one or more users depending on workflow configuration
+* A routing column always contains either:
+
+  * A valid user id
+  * Null (indicating workflow completion)
+* Formula columns are never persisted — only computed at read time
+* Mapped columns always reflect latest table data (no caching)
+* A user can only see rows explicitly assigned to them
+* A user can only edit columns that are both:
+
+  * Marked as editable at the column level
+  * Allowed by the row-level assignment permissions
+* A row cannot exist without a project
+* A project cannot be accessed unless published
 
 ---
 
 ## Master Table Columns
 
-Every column in the master table has a type. The type determines where its value comes from and how it behaves.
+Every column in the master table has a type.
+
+---
 
 ### Mapped
-Value is pulled from a raw uploaded table via a defined join. Admin picks the source table and source column. Value is read at fetch time. Never editable by users.
+
+* Value pulled from uploaded tables via joins
+* Read at fetch time
+* Never editable
+
+---
 
 ### Formula
-Value is calculated at fetch time from other columns using Excel-compatible syntax. Admin writes the formula using column names as references.
+
+* Computed at fetch time
+* Uses Excel-compatible syntax
+* Can reference other columns
+
+Examples:
 
 ```
 AY3_mid = base_mid + (NHE * 25) + (AE * 50)
 base_ratio = base_actual / AY3_mid
 ```
 
-Formula columns are evaluated in dependency order — if one formula references another, the dependency is resolved first. Never editable by users.
+Rules:
+
+* Evaluated in dependency order
+* Never editable
+* Pure and stateless
+* Same inputs always produce same outputs
+* No side effects allowed
+
+---
 
 ### User Input
-Value is filled in by the user. Admin defines the input type:
-- **Text** — free text entry
-- **Number** — numeric value only
-- **Dropdown** — admin defines a fixed list of allowed values
+
+Defined by admin.
+
+Types:
+
+* Text
+* Number
+* Dropdown (fixed values)
+
+Rules:
+
+* Editable based on permissions
+* Can be required
+
+---
 
 ### Lookup
-A special input type. Renders as a dropdown populated from a reference table column. When the user selects a value, the system resolves the join and auto-fills all mapped columns that source from the same table. The user picks one value and the rest populate instantly.
 
-Example: User selects "Senior Engineer" from a Job Role lookup. Base Midpoint, NHE Target, and AE Target all fill automatically from the bands table.
+Special input type.
+
+* Dropdown sourced from a reference table
+* On selection:
+
+  * Resolves join
+  * Auto-fills mapped columns from same table
+
+Rules:
+
+* Must match value in source table
+* Changing value refreshes all dependent mapped columns
+* Clearing value resets dependent mapped columns to null
+
+---
 
 ### Routing
-A hidden column that drives the workflow. Always invisible to users. Holds a user id — the next person the row should go to. Admin defines one routing column per master table. On submission, the system reads this column, transfers the row, and updates the value to chain to the next user.
+
+* Hidden column
+* Holds user id of next owner
+* Always exists (if workflow enabled)
+
+Rules:
+
+* Not visible to users
+* Not editable
+* Drives workflow progression
 
 ---
 
 ## Joins
 
-Admin defines how tables relate to each other. A join connects two tables on matching column values. This is how mapped and lookup columns pull values from reference tables into the master table view.
+Admin defines relationships between tables.
+
+Example:
 
 ```
-Bands Table . Job Role = Offer Table . Job Role
+Bands.Job Role = Offer.Job Role
 ```
 
-Multiple joins can be defined in one project. The master table can pull mapped columns from any joined table.
+Rules:
+
+* Enables mapped + lookup resolution
+* Multiple joins allowed
+* Joins must be valid at configuration time
 
 ---
 
 ## Visibility and Editability
 
 ### Column Level
-Admin sets visibility and editability on each master table column. These apply to all users.
-- Formula and mapped columns are always read-only regardless of flags
-- Routing column is always hidden regardless of flags
+
+* Controlled by admin
+* Applies globally
+
+Rules:
+
+* Formula + mapped → always read-only
+* Routing → always hidden
+
+---
 
 ### Row Level
-Admin assigns rows to users. Each assignment carries its own visibility and editability flags. A user sees a row only if it is in their assignment and is_visible is true. A user can edit a row only if is_editable is also true.
 
-The combination of column-level and row-level flags means fine-grained control. A user might be able to see a row but not edit it. They might be able to edit some columns on a row but not others.
+Controlled per assignment.
+
+Each assignment defines:
+
+* `is_visible`
+* `is_editable`
+
+Rules:
+
+* User sees row only if `is_visible = true`
+* User edits only if `is_editable = true`
+* Combined with column rules for fine-grained control
 
 ---
 
 ## Users and User Data
 
-Users are uploaded as a CSV. Required fields are id, name, and email. Any additional columns in the CSV are stored as flexible data on the user record. These extra columns can be used by the routing engine.
+Users uploaded via CSV.
 
 Example:
+
 ```
 id, name, email, manager_id, region
 u1, John, john@co.com, u3, APAC
@@ -104,99 +255,170 @@ u3, Mike, mike@co.com, u5, APAC
 u5, Director, dir@co.com, null, APAC
 ```
 
-`manager_id` and `region` are not special fields — they are just data on the user that the admin can reference in routing configuration.
+Rules:
+
+* Additional fields stored as flexible data
+* Can be used in routing logic
+* No predefined schema beyond required fields
 
 ---
 
 ## Routing and Workflow
 
-### The Routing Column
-Admin marks one column as the routing column. This column holds a user id at all times. It is the answer to "who owns this row next."
+### Routing Column
 
-Admin defines where the routing column gets its value from:
-- **From the row** — another column on the row holds the target user id. The user may have selected this (e.g. a "Send To" dropdown) or it may be mapped from a table.
-- **From the submitting user's data** — a column on the submitting user's record holds the target user id (e.g. manager_id).
+Defines who owns the row next.
 
-### Submission
-When a user submits a row:
-1. System validates all required inputs are filled
-2. System validates all formulas resolve without error
-3. System reads the routing column value — this is the target user id
-4. Row is removed from the submitting user's row list
-5. Row is added to the target user's row list
-6. System looks up the target user's data record
-7. Routing column value is updated to the target user's routing source column value (e.g. their manager_id)
-8. If the new routing value is null — the chain ends. Row is complete.
+Sources:
+
+* From row (column value)
+* From user data (e.g. manager_id)
+
+---
+
+## Routing Resolution Rules
+
+1. If source = row:
+
+   * Read value from row column
+
+2. If source = user:
+
+   * Read value from submitting user data
+
+3. Result:
+
+   * Valid user id → continue
+   * Null → complete
+   * Invalid → block submission
+
+4. Resolution must happen synchronously during submission
+
+---
+
+## Submission Flow
+
+On submit:
+
+1. Validate required inputs
+2. Validate formulas resolve
+3. Resolve routing value
+4. Remove row from current user
+5. Assign row to next user
+6. Load next user's data
+7. Update routing column using their routing source
+8. If routing becomes null → complete
+
+---
+
+## Routing Patterns
 
 ### Peer Routing
-User selects who to send to from a dropdown. Routing column is set once. Row goes to that user. Chain ends after one transfer (their routing source will be null or not configured).
+
+* User selects next user
+* Single transfer
+* Ends after one step
+
+---
 
 ### Hierarchical Routing
-Routing column sources from the submitting user's manager_id. Each time a user acts on the row and passes it along, the routing column updates to the next manager in the chain. Automatically walks up the hierarchy until it reaches a user with no manager.
+
+* Uses `manager_id`
+* Automatically walks up hierarchy
+
+Example:
 
 ```
-John submits → routes to Mike (John's manager_id)
-Mike approves → routes to Director (Mike's manager_id)
-Director approves → routing value is null → complete
+John → Mike → Director → Complete
 ```
 
-### Both patterns use the same mechanism. The routing column just chains differently depending on what the routing source column resolves to at each step.
+---
+
+## Row State
+
+Each row exists in one of the following states:
+
+* ACTIVE → assigned and pending action
+* TRANSFERRED → moving between users (transient)
+* COMPLETED → routing is null
+
+Transitions:
+
+* ACTIVE → TRANSFERRED → ACTIVE
+* ACTIVE → COMPLETED
+
+Rules:
+
+* Only ACTIVE rows visible
+* COMPLETED rows are read-only
+* TRANSFERRED is temporary
 
 ---
 
 ## Formula Engine
 
-One formula engine handles all column formula evaluation. It runs at read time when a row is fetched.
+Single engine evaluates all formulas.
 
-### Syntax
-Excel-compatible. Column names used instead of cell references.
+### Evaluation Steps
 
-Supported:
-- Math: `+ - * / ()`
-- Comparison: `> < >= <= = <>`
-- Logic: `IF, AND, OR, NOT`
-- String: `CONCAT, LEFT, RIGHT, LEN, TRIM`
-- Date: `TODAY, DATEDIF` (Phase 2)
+1. Resolve mapped values via joins
+2. Merge user inputs
+3. Build dependency graph
+4. Evaluate in order
+5. Return resolved row
 
-### Evaluation
-1. Resolve all mapped column values via joins
-2. Merge user input values from the row
-3. Build dependency graph of formula columns
-4. Evaluate in dependency order
-5. Return fully resolved row
+---
 
-### Errors
-- Division by zero → return 0
-- Undefined column reference → blocked at publish time
-- Circular reference → blocked at master table save time
-- Formula error at read time → return 0, flag the cell
+### Supported Functions
+
+* Math: `+ - * / ()`
+* Comparison: `> < >= <= = <>`
+* Logic: `IF, AND, OR, NOT`
+* String: `CONCAT, LEFT, RIGHT, LEN, TRIM`
+* Date: `TODAY, DATEDIF` (Phase 2)
+
+---
+
+### Error Handling
+
+* Division by zero → return 0
+* Undefined reference → blocked at publish
+* Circular reference → blocked at save
+* Runtime error → return 0 and flag
 
 ---
 
 ## Validation Rules
 
-### At Master Table Save
-- All formula references must point to existing columns
-- No circular references
-- Maximum one routing column per master table
+### Master Table Save
 
-### At Publish
-- At least one table uploaded
-- Master table has at least one column configured
-- At least one user added to the project
-- All formula columns pass validation
-- If routing is configured — routing source column must exist on the row or on user data
+* All references valid
+* No circular dependencies
+* Max one routing column
 
-### At Submission
-- All user_input columns marked required must have values
-- All formula columns must resolve without error
-- Routing column must resolve to a valid user id (unless no routing is configured)
+---
+
+### Publish
+
+* At least one table
+* At least one column
+* At least one user
+* Valid formulas
+* Valid routing config
+
+---
+
+### Submission
+
+* Required inputs filled
+* Formulas resolve
+* Routing resolves to valid user or null
 
 ---
 
 ## What Forma Is Not
 
-- Forma is not a spreadsheet. Users cannot add columns or change structure.
-- Forma is not a form builder. The structure comes from existing spreadsheet logic.
-- Forma is not a reporting tool. Aggregates and dashboards are a later phase.
-- Forma does not store formula results. They are always computed fresh at read time.
+* Not a spreadsheet (no structure editing by users)
+* Not a form builder
+* Not a reporting tool (yet)
+* Does not store computed values

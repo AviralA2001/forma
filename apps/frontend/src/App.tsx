@@ -1,28 +1,18 @@
-import React, { useState } from 'react';
-import { AgGridReact } from 'ag-grid-react';
-import 'ag-grid-community/styles/ag-grid.css';
-import 'ag-grid-community/styles/ag-theme-alpine.css';
+import React from 'react';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { ProjectsPage } from './pages/projects';
+import { ProjectWorkspace } from './pages/projects/workspace/ProjectWorkspace';
+import './App.css';
 
 function App() {
-  const [rowData] = useState([
-    { make: 'Toyota', model: 'Celica', price: 35000 },
-    { make: 'Ford', model: 'Mondeo', price: 32000 },
-    { make: 'Porsche', model: 'Boxster', price: 72000 }
-  ]);
-
-  const [columnDefs] = useState([
-    { field: 'make' },
-    { field: 'model' },
-    { field: 'price' }
-  ]);
-
   return (
-    <div className="ag-theme-alpine" style={{ height: 400, width: 600 }}>
-      <AgGridReact
-        rowData={rowData}
-        columnDefs={columnDefs}>
-      </AgGridReact>
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/projects" element={<ProjectsPage />} />
+        <Route path="/projects/:id" element={<ProjectWorkspace />} />
+        <Route path="/" element={<Navigate to="/projects" replace />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 

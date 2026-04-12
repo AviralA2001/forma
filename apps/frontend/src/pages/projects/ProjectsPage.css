@@ -1,0 +1,116 @@
+:root {
+  /* Background */
+  --color-bg-base: #f9fafb;
+  --color-bg-surface: #ffffff;
+  --color-bg-subtle: #f3f4f6;
+
+  /* Border */
+  --color-border: #e5e7eb;
+
+  /* Text */
+  --color-text-primary: #111827;
+  --color-text-secondary: #6b7280;
+
+  /* Brand */
+  --color-brand: #4f46e5;
+  --color-brand-hover: #4338ca;
+
+  /* Error */
+  --color-error: #dc2626;
+  --color-error-light: #fee2e2;
+
+  /* Font */
+  --text-base: 14px;
+  --text-lg: 16px;
+  --text-xl: 18px;
+  --text-2xl: 22px;
+}
+
+.projects-page {
+  padding: 32px;
+  max-width: 1400px;
+  margin: 0 auto;
+  background: var(--color-bg-base);
+  min-height: 100vh;
+}
+
+.projects-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32px;
+}
+
+.projects-header h1 {
+  margin: 0;
+  font-size: var(--text-2xl);
+  font-weight: 700;
+  color: var(--color-text-primary);
+}
+
+.projects-new-button {
+  padding: 8px 16px;
+  background: var(--color-brand);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: var(--text-base);
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+  font-family: inherit;
+}
+
+.projects-new-button:hover {
+  background: var(--color-brand-hover);
+}
+
+.projects-error {
+  background: var(--color-error-light);
+  color: var(--color-error);
+  padding: 12px 16px;
+  border-radius: 6px;
+  margin-bottom: 16px;
+  font-size: var(--text-base);
+}
+
+.projects-empty {
+  text-align: center;
+  padding: 64px 32px;
+}
+
+.projects-empty h2 {
+  margin: 0 0 8px 0;
+  font-size: var(--text-xl);
+  color: var(--color-text-primary);
+  font-weight: 600;
+}
+
+.projects-empty p {
+  margin: 0 0 24px 0;
+  color: var(--color-text-secondary);
+  font-size: var(--text-base);
+}
+
+.projects-empty-button {
+  padding: 8px 16px;
+  background: var(--color-brand);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: var(--text-base);
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+  font-family: inherit;
+}
+
+.projects-empty-button:hover {
+  background: var(--color-brand-hover);
+}
+
+.projects-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+}
