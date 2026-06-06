@@ -1,0 +1,1 @@
+@.onesquad/CLAUDE.md

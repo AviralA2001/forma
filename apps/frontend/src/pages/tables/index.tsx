@@ -21,6 +21,7 @@ export const TablesPage: React.FC<TablesPageProps> = ({ project: propProject }) 
   const [project, setProject] = useState<Project | null>(propProject || null);
   const [tables, setTables] = useState<TableResponse[]>([]);
   const [selectedTable, setSelectedTable] = useState<TableDetailResponse | null>(null);
+  const [isReupload, setIsReupload] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -223,6 +224,7 @@ export const TablesPage: React.FC<TablesPageProps> = ({ project: propProject }) 
   };
 
   const openRenameColumnModal = (columnId: string, columnName: string) => {
+    setCurrentTableId(selectedTable!.table_id);
     setCurrentColumnId(columnId);
     setCurrentColumnName(columnName);
     setIsRenameColumnModalOpen(true);
@@ -235,6 +237,7 @@ export const TablesPage: React.FC<TablesPageProps> = ({ project: propProject }) 
   };
 
   const openReuploadModal = (tableId: string) => {
+    setIsReupload(true);
     setCurrentTableId(tableId);
     setIsUploadModalOpen(true);
   };
@@ -358,7 +361,10 @@ export const TablesPage: React.FC<TablesPageProps> = ({ project: propProject }) 
                 ))}
                 <button
                   className="add-tab-button"
-                  onClick={() => setIsUploadModalOpen(true)}
+                  onClick={() => {
+                    setIsUploadModalOpen(true);
+                    setIsReupload(false);
+                  }}
                 >
                   +
                 </button>
@@ -385,7 +391,7 @@ export const TablesPage: React.FC<TablesPageProps> = ({ project: propProject }) 
       <UploadTableModal
         isOpen={isUploadModalOpen}
         onClose={() => setIsUploadModalOpen(false)}
-        onConfirm={selectedTable ? handleReuploadTable : handleUploadTable}
+        onConfirm={isReupload ? handleReuploadTable : handleUploadTable}
         isLoading={uploadingTable}
       />
 

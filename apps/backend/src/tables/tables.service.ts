@@ -35,8 +35,10 @@ export class TablesService {
     }));
     await this.tablesRepository.insertTableRows(table.table_id, tableRows);
 
+    const row_count = await this.tablesRepository.getRowCountForTable(table.table_id);
+
     // Return updated table with row count
-    return this.tablesRepository.getTableById(table.table_id);
+    return { ...table, row_count };
   }
 
   async getTables(projectId: string): Promise<Table[]> {
@@ -73,7 +75,6 @@ export class TablesService {
     if (!column) {
       throw new NotFoundException('Column not found');
     }
-
     // Update column name
     const updatedColumns = table.columns.map(c =>
       c.column_id === columnId ? { ...c, name: newName } : c

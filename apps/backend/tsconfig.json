@@ -17,7 +17,6 @@
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false,
-    "baseUrl": ".",
     "paths": {
       "@forma/shared": ["../../packages/shared/src"]
     }

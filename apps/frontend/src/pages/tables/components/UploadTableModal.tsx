@@ -1,5 +1,4 @@
 import React, { useState, useRef } from 'react';
-import './UploadTableModal.css';
 
 interface UploadTableModalProps {
   isOpen: boolean;
@@ -58,36 +57,39 @@ export const UploadTableModal: React.FC<UploadTableModalProps> = ({
   return (
     <div className="modal-overlay">
       <div className="modal-content">
-        <h2>Upload CSV Table</h2>
+        <div className="modal-header">
+          <h2 className="modal-title">Upload CSV Table</h2>
+        </div>
         <div className="modal-body">
-          <div className="file-input-container">
+          <div className="input-group">
             <input
               ref={fileInputRef}
               type="file"
               accept=".csv"
               onChange={handleFileSelect}
               disabled={isLoading}
+              className="input"
             />
             {selectedFile && (
-              <div className="file-info">
+              <div className="text-sm text-success">
                 Selected: {selectedFile.name}
               </div>
             )}
           </div>
           {error && <div className="error-message">{error}</div>}
         </div>
-        <div className="modal-actions">
+        <div className="modal-footer">
           <button
             onClick={handleClose}
             disabled={isLoading}
-            className="cancel-button"
+            className="btn btn-secondary"
           >
             Cancel
           </button>
           <button
             onClick={handleConfirm}
             disabled={isLoading || !selectedFile}
-            className="confirm-button"
+            className="btn btn-primary"
           >
             {isLoading ? 'Uploading...' : 'Upload'}
           </button>

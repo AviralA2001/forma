@@ -8,7 +8,7 @@ export class ProjectResponseDto {
   name: string;
 
   @Expose()
-  owner_id: string;
+  org_id: string;
 
   @Expose()
   status: 'draft' | 'published';

@@ -23,8 +23,8 @@ importers:
         specifier: ^9.0.0
         version: 9.4.3(@nestjs/common@9.4.3(class-transformer@0.5.1)(class-validator@0.13.2)(reflect-metadata@0.1.14)(rxjs@7.8.2))(@nestjs/core@9.4.3)
       '@nestjs/typeorm':
-        specifier: ^8.1.4
-        version: 8.1.4(@nestjs/common@9.4.3(class-transformer@0.5.1)(class-validator@0.13.2)(reflect-metadata@0.1.14)(rxjs@7.8.2))(@nestjs/core@9.4.3)(reflect-metadata@0.1.14)(rxjs@7.8.2)(typeorm@0.2.45(pg@8.20.0))
+        specifier: ^10.0.0
+        version: 10.0.0(@nestjs/common@9.4.3(class-transformer@0.5.1)(class-validator@0.13.2)(reflect-metadata@0.1.14)(rxjs@7.8.2))(@nestjs/core@9.4.3)(reflect-metadata@0.1.14)(rxjs@7.8.2)(typeorm@0.3.10(pg@8.20.0)(ts-node@10.9.2(@types/node@16.18.126)(typescript@4.9.5)))
       class-transformer:
         specifier: ^0.5.1
         version: 0.5.1
@@ -41,8 +41,8 @@ importers:
         specifier: ^7.2.0
         version: 7.8.2
       typeorm:
-        specifier: ^0.2.45
-        version: 0.2.45(pg@8.20.0)
+        specifier: ^0.3.10
+        version: 0.3.10(pg@8.20.0)(ts-node@10.9.2(@types/node@16.18.126)(typescript@4.9.5))
       uuid:
         specifier: ^13.0.0
         version: 13.0.0
@@ -167,6 +167,10 @@ importers:
       web-vitals:
         specifier: ^2.1.4
         version: 2.1.4
+    devDependencies:
+      eslint-config-react-app:
+        specifier: ^7.0.1
+        version: 7.0.1(@babel/plugin-syntax-flow@7.28.6(@babel/core@7.29.0))(@babel/plugin-transform-react-jsx@7.28.6(@babel/core@7.29.0))(eslint@8.57.1)(jest@27.5.1(ts-node@10.9.2(@types/node@16.18.126)(typescript@4.9.5)))(typescript@4.9.5)
 
   packages/shared:
     devDependencies:
@@ -1268,11 +1272,11 @@ packages:
       '@nestjs/platform-express':
         optional: true
 
-  '@nestjs/typeorm@8.1.4':
-    resolution: {integrity: sha512-hKv0Y9PG7YkHQfjsrNqM1s/VajlT7Mla8gaoblmuLzgMKsOQFsZXSHlXNxXZ8CA4aCPeDUiXtvqc4zocadGiIQ==}
+  '@nestjs/typeorm@10.0.0':
+    resolution: {integrity: sha512-WQU4HCDTz4UavsFzvGUKDHqi0MO5K47yFoPXdmh+Z/hCNO7SHCMmV9jLiLukM8n5nKUqJ3jDqiljkWBcZPdCtA==}
     peerDependencies:
-      '@nestjs/common': ^8.0.0
-      '@nestjs/core': ^8.0.0
+      '@nestjs/common': ^8.0.0 || ^9.0.0 || ^10.0.0
+      '@nestjs/core': ^8.0.0 || ^9.0.0 || ^10.0.0
       reflect-metadata: ^0.1.13
       rxjs: ^7.2.0
       typeorm: ^0.3.0
@@ -1657,9 +1661,6 @@ packages:
 
   '@types/yargs@17.0.35':
     resolution: {integrity: sha512-qUHkeCyQFxMXg79wQfTtfndEC+N9ZZg76HJftDJp+qH2tV7Gj4OJi7l+PiWwJ+pWtW8GwSmqsDj/oymhrTWXjg==}
-
-  '@types/zen-observable@0.8.3':
-    resolution: {integrity: sha512-fbF6oTd4sGGy0xjHPKAt+eS2CrxJ3+6gQ3FGcBoIJR2TLAyCkCyI8JqZNy+FeON0AhVgNJoUumVoZQjBFUqHkw==}
 
   '@typescript-eslint/eslint-plugin@5.62.0':
     resolution: {integrity: sha512-TiZzBSJja/LbhNPvk6yc0JrX9XqhQ0hdh6M2svYfsHGejaKFIAGd9MQ+ERIMzLGlN/kZoYIgdxFV0PuljTKXag==}
@@ -2631,6 +2632,10 @@ packages:
     resolution: {integrity: sha512-BS8PfmtDGnrgYdOonGZQdLZslWIeCGFP9tpan0hi1Co2Zr2NKADsvGYA8XxuG/4UWgJ6Cjtv+YJnB6MM69QGlQ==}
     engines: {node: '>= 0.4'}
 
+  date-fns@2.30.0:
+    resolution: {integrity: sha512-fnULvOpxnC5/Vg3NCiWelDsLiUc9bRwAPs/+LfTLNvetFCtCTN+yQz15C/fs4AwX1R9K5GLtLfn8QW+dWisaAw==}
+    engines: {node: '>=0.11'}
+
   debug@2.6.9:
     resolution: {integrity: sha512-bC7ElrdJaJnPbAP+1EotYvqZsb3ecl5wi6Bfi6BJTUcNowp6cvspg0jXznRTKDjm/E7AdgFBVeAPVMNcKGsHMA==}
     peerDependencies:
@@ -2800,9 +2805,9 @@ packages:
     resolution: {integrity: sha512-rlBi9d8jpv9Sf1klPjNfFAuWDjKLwTIJJ/VxtoTwIR6hnZxcEOQCZg2oIL3MWBYw5GpUDKOEnND7LXTbIpQ03Q==}
     engines: {node: '>=10'}
 
-  dotenv@8.6.0:
-    resolution: {integrity: sha512-IrPdXQsk2BbzvCBGBOTmmSH5SodmqZNt4ERAZDmW4CT+tL8VtvinqywuANaFu4bOMWki16nqf0e4oC0QIaDr/g==}
-    engines: {node: '>=10'}
+  dotenv@16.6.1:
+    resolution: {integrity: sha512-uBq4egWHTcTt33a72vpSG0z3HnPuIl6NqYcTrKEg2azoEyl2hpW0zqlxysq2pK9HlDIHyHyakeYaYnSAwd8bow==}
+    engines: {node: '>=12'}
 
   dunder-proto@1.0.1:
     resolution: {integrity: sha512-KIN/nDJBQRcXw0MLVhZE9iQHmG68qAVIBg9CqmUYjmQIhgij9U5MFvrqkUL5FbtyyzZuOeOt0zdeRe4UY7ct+A==}
@@ -6233,26 +6238,31 @@ packages:
   typedarray@0.0.6:
     resolution: {integrity: sha512-/aCDEGatGvZ2BIk+HmLf4ifCJFwvKFNb9/JeZPMulfgFracn9QFcAf5GO8B/mweUjSoblS5In0cWhqpfs/5PQA==}
 
-  typeorm@0.2.45:
-    resolution: {integrity: sha512-c0rCO8VMJ3ER7JQ73xfk0zDnVv0WDjpsP6Q1m6CVKul7DB9iVdWLRjPzc8v2eaeBuomsbZ2+gTaYr8k1gm3bYA==}
+  typeorm@0.3.10:
+    resolution: {integrity: sha512-VMKiM84EpJQ+Mz9xDIPqnfplWhyUy1d8ccaKdMY9obifxJOTFnv8GYVyPsGwG8Lk7Nb8MlttHyHWENGAhBA3WA==}
+    engines: {node: '>= 12.9.0'}
     hasBin: true
     peerDependencies:
-      '@sap/hana-client': ^2.11.14
+      '@google-cloud/spanner': ^5.18.0
+      '@sap/hana-client': ^2.12.25
       better-sqlite3: ^7.1.2
       hdb-pool: ^0.1.6
-      ioredis: ^4.28.3
+      ioredis: ^5.0.4
       mongodb: ^3.6.0
-      mssql: ^6.3.1
+      mssql: ^7.3.0
       mysql2: ^2.2.5
       oracledb: ^5.1.0
       pg: ^8.5.1
       pg-native: ^3.0.0
       pg-query-stream: ^4.0.0
-      redis: ^3.1.1
+      redis: ^3.1.1 || ^4.0.0
       sql.js: ^1.4.0
-      sqlite3: ^5.0.2
+      sqlite3: ^5.0.3
+      ts-node: ^10.7.0
       typeorm-aurora-data-api-driver: ^2.0.0
     peerDependenciesMeta:
+      '@google-cloud/spanner':
+        optional: true
       '@sap/hana-client':
         optional: true
       better-sqlite3:
@@ -6280,6 +6290,8 @@ packages:
       sql.js:
         optional: true
       sqlite3:
+        optional: true
+      ts-node:
         optional: true
       typeorm-aurora-data-api-driver:
         optional: true
@@ -6373,6 +6385,11 @@ packages:
 
   uuid@8.3.2:
     resolution: {integrity: sha512-+NYs2QeMWy+GWFOEm9xnn6HCDp0l7QBD7ml8zLUmJ+93Q5NF0NocErnwkTkXVFNiX3/fpC6afS8Dhb/gz7R7eg==}
+    deprecated: uuid@10 and below is no longer supported.  For ESM codebases, update to uuid@latest.  For CommonJS codebases, use uuid@11 (but be aware this version will likely be deprecated in 2028).
+    hasBin: true
+
+  uuid@9.0.0:
+    resolution: {integrity: sha512-MXcSTerfPa4uqyzStbRoTgt5XIe3x5+42+q1sDuy3R5MDk66URdLMOZe5aPX/SQd+kuYAh0FdP/pO28IkQyTeg==}
     hasBin: true
 
   v8-compile-cache-lib@3.0.1:
@@ -6700,12 +6717,6 @@ packages:
   yocto-queue@0.1.0:
     resolution: {integrity: sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==}
     engines: {node: '>=10'}
-
-  zen-observable-ts@1.1.0:
-    resolution: {integrity: sha512-1h4zlLSqI2cRLPJUHJFL8bCWHhkpuXkF+dbGkRaWjgDIG26DmzyshUMrdV/rL3UnR+mhaX4fRq8LPouq0MYYIA==}
-
-  zen-observable@0.8.15:
-    resolution: {integrity: sha512-PQ2PC7R9rslx84ndNBZB/Dkv8V8fZEpk83RLgXtYd0fwUgEjseMn1Dgajh2x6S8QbZAFa9p2qVCEuYZNgve0dQ==}
 
 snapshots:
 
@@ -8208,14 +8219,14 @@ snapshots:
     optionalDependencies:
       '@nestjs/platform-express': 9.4.3(@nestjs/common@9.4.3(class-transformer@0.5.1)(class-validator@0.13.2)(reflect-metadata@0.1.14)(rxjs@7.8.2))(@nestjs/core@9.4.3)
 
-  '@nestjs/typeorm@8.1.4(@nestjs/common@9.4.3(class-transformer@0.5.1)(class-validator@0.13.2)(reflect-metadata@0.1.14)(rxjs@7.8.2))(@nestjs/core@9.4.3)(reflect-metadata@0.1.14)(rxjs@7.8.2)(typeorm@0.2.45(pg@8.20.0))':
+  '@nestjs/typeorm@10.0.0(@nestjs/common@9.4.3(class-transformer@0.5.1)(class-validator@0.13.2)(reflect-metadata@0.1.14)(rxjs@7.8.2))(@nestjs/core@9.4.3)(reflect-metadata@0.1.14)(rxjs@7.8.2)(typeorm@0.3.10(pg@8.20.0)(ts-node@10.9.2(@types/node@16.18.126)(typescript@4.9.5)))':
     dependencies:
       '@nestjs/common': 9.4.3(class-transformer@0.5.1)(class-validator@0.13.2)(reflect-metadata@0.1.14)(rxjs@7.8.2)
       '@nestjs/core': 9.4.3(@nestjs/common@9.4.3(class-transformer@0.5.1)(class-validator@0.13.2)(reflect-metadata@0.1.14)(rxjs@7.8.2))(@nestjs/platform-express@9.4.3)(reflect-metadata@0.1.14)(rxjs@7.8.2)
       reflect-metadata: 0.1.14
       rxjs: 7.8.2
-      typeorm: 0.2.45(pg@8.20.0)
-      uuid: 8.3.2
+      typeorm: 0.3.10(pg@8.20.0)(ts-node@10.9.2(@types/node@16.18.126)(typescript@4.9.5))
+      uuid: 9.0.0
 
   '@nicolo-ribaudo/eslint-scope-5-internals@5.1.1-v1':
     dependencies:
@@ -8657,8 +8668,6 @@ snapshots:
   '@types/yargs@17.0.35':
     dependencies:
       '@types/yargs-parser': 21.0.3
-
-  '@types/zen-observable@0.8.3': {}
 
   '@typescript-eslint/eslint-plugin@5.62.0(@typescript-eslint/parser@5.62.0(eslint@8.57.1)(typescript@4.9.5))(eslint@8.57.1)(typescript@4.9.5)':
     dependencies:
@@ -9825,6 +9834,10 @@ snapshots:
       es-errors: 1.3.0
       is-data-view: 1.0.2
 
+  date-fns@2.30.0:
+    dependencies:
+      '@babel/runtime': 7.29.2
+
   debug@2.6.9:
     dependencies:
       ms: 2.0.0
@@ -9989,7 +10002,7 @@ snapshots:
 
   dotenv@10.0.0: {}
 
-  dotenv@8.6.0: {}
+  dotenv@16.6.1: {}
 
   dunder-proto@1.0.1:
     dependencies:
@@ -14324,15 +14337,16 @@ snapshots:
 
   typedarray@0.0.6: {}
 
-  typeorm@0.2.45(pg@8.20.0):
+  typeorm@0.3.10(pg@8.20.0)(ts-node@10.9.2(@types/node@16.18.126)(typescript@4.9.5)):
     dependencies:
       '@sqltools/formatter': 1.2.5
       app-root-path: 3.1.0
       buffer: 6.0.3
       chalk: 4.1.2
       cli-highlight: 2.1.11
+      date-fns: 2.30.0
       debug: 4.4.3
-      dotenv: 8.6.0
+      dotenv: 16.6.1
       glob: 7.2.3
       js-yaml: 4.1.1
       mkdirp: 1.0.4
@@ -14342,9 +14356,9 @@ snapshots:
       uuid: 8.3.2
       xml2js: 0.4.23
       yargs: 17.7.2
-      zen-observable-ts: 1.1.0
     optionalDependencies:
       pg: 8.20.0
+      ts-node: 10.9.2(@types/node@16.18.126)(typescript@4.9.5)
     transitivePeerDependencies:
       - supports-color
 
@@ -14421,6 +14435,8 @@ snapshots:
   uuid@13.0.0: {}
 
   uuid@8.3.2: {}
+
+  uuid@9.0.0: {}
 
   v8-compile-cache-lib@3.0.1: {}
 
@@ -14890,10 +14906,3 @@ snapshots:
   yn@3.1.1: {}
 
   yocto-queue@0.1.0: {}
-
-  zen-observable-ts@1.1.0:
-    dependencies:
-      '@types/zen-observable': 0.8.3
-      zen-observable: 0.8.15
-
-  zen-observable@0.8.15: {}

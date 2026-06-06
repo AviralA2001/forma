@@ -8,18 +8,24 @@ import { ProjectResponseDto } from './dto/project-response.dto';
 export class ProjectsService {
   constructor(private readonly projectsRepository: ProjectsRepository) {}
 
-  async createProject(ownerId: string, dto: CreateProjectDto): Promise<ProjectResponseDto> {
-    const project = await this.projectsRepository.create(ownerId, dto.name);
+  async createProject(orgId: string, dto: CreateProjectDto): Promise<ProjectResponseDto> {
+
+    // TODO: Verify user has project admin access and add user_id as project creator
+    const project = await this.projectsRepository.create(orgId, dto.name);
     return this.mapToResponse(project);
   }
 
-  async getProjects(ownerId: string): Promise<ProjectResponseDto[]> {
-    const projects = await this.projectsRepository.findAllByOwner(ownerId);
+  async getProjects(orgId: string,): Promise<ProjectResponseDto[]> {
+
+    // TODO: Verify user has access to projects, will change the whole flow find the project ids from project users and then fetch those projects
+    const projects = await this.projectsRepository.findAllByOwner(orgId);
     return projects.map(p => this.mapToResponse(p));
   }
 
-  async getProject(projectId: string, ownerId: string): Promise<ProjectResponseDto> {
-    const project = await this.projectsRepository.findOne(projectId, ownerId);
+  async getProject(projectId: string, orgId: string,): Promise<ProjectResponseDto> {
+
+    // TODO: Verify user has access to the project
+    const project = await this.projectsRepository.findOne(projectId, orgId);
     if (!project) {
       throw new NotFoundException('Project not found');
     }
@@ -28,24 +34,28 @@ export class ProjectsService {
 
   async updateProject(
     projectId: string,
-    ownerId: string,
+    orgId: string, 
     dto: UpdateProjectDto
   ): Promise<ProjectResponseDto> {
-    const project = await this.projectsRepository.findOne(projectId, ownerId);
+
+    // TODO: Verify user has project admin access
+    const project = await this.projectsRepository.findOne(projectId, orgId);
     if (!project) {
       throw new NotFoundException('Project not found');
     }
 
     const updated = await this.projectsRepository.update(
       projectId,
-      ownerId,
+      orgId,
       dto.name || project.name
     );
     return this.mapToResponse(updated);
   }
 
-  async deleteProject(projectId: string, ownerId: string): Promise<void> {
-    const project = await this.projectsRepository.findOne(projectId, ownerId);
+  async deleteProject(projectId: string, orgId: string): Promise<void> {
+
+    // TODO: Verify user has project admin access
+    const project = await this.projectsRepository.findOne(projectId, orgId);
     if (!project) {
       throw new NotFoundException('Project not found');
     }
@@ -54,14 +64,14 @@ export class ProjectsService {
       throw new BadRequestException('Published projects cannot be deleted');
     }
 
-    await this.projectsRepository.delete(projectId, ownerId);
+    await this.projectsRepository.delete(projectId, orgId);
   }
 
   private mapToResponse(project: any): ProjectResponseDto {
     const dto = new ProjectResponseDto();
     dto.project_id = project.project_id;
     dto.name = project.name;
-    dto.owner_id = project.owner_id;
+    dto.org_id = project.org_id;
     dto.status = project.status;
     dto.created_at = project.created_at;
     dto.updated_at = project.updated_at;

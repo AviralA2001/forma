@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import './NewProjectModal.css';
 
 interface NewProjectModalProps {
   isOpen: boolean;
@@ -41,7 +40,7 @@ export const NewProjectModal: React.FC<NewProjectModalProps> = ({
         <h2 className="modal-title">Create a new project</h2>
         <input
           type="text"
-          className={`modal-input ${error ? 'modal-input-error' : ''}`}
+          className={`input ${error ? 'input-error' : ''}`}
           placeholder="Project name"
           value={projectName}
           onChange={(e) => {
@@ -55,17 +54,17 @@ export const NewProjectModal: React.FC<NewProjectModalProps> = ({
           disabled={isLoading}
           autoFocus
         />
-        {error && <p className="modal-error">{error}</p>}
+        {error && <p className="error-message">{error}</p>}
         <div className="modal-actions">
           <button
-            className="modal-button modal-button-ghost"
+            className="btn btn-secondary"
             onClick={handleClose}
             disabled={isLoading}
           >
             Cancel
           </button>
           <button
-            className="modal-button modal-button-primary"
+            className="btn btn-primary"
             onClick={handleConfirm}
             disabled={isLoading}
           >

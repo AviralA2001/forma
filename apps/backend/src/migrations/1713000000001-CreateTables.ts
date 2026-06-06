@@ -18,7 +18,7 @@ export class CreateTables1713000000001 implements MigrationInterface {
     `);
 
     await queryRunner.query(`
-      CREATE TABLE table_rows (
+      CREATE TABLE rows (
         row_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         table_id UUID REFERENCES tables(table_id) ON DELETE CASCADE,
         data JSONB NOT NULL,
@@ -27,13 +27,13 @@ export class CreateTables1713000000001 implements MigrationInterface {
     `);
 
     await queryRunner.query(`
-      CREATE INDEX idx_table_rows_table_id ON table_rows(table_id)
+      CREATE INDEX idx_rows_table_id ON rows(table_id)
     `);
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(`DROP INDEX IF EXISTS idx_table_rows_table_id`);
-    await queryRunner.query(`DROP TABLE IF EXISTS table_rows`);
+    await queryRunner.query(`DROP INDEX IF EXISTS idx_rows_table_id`);
+    await queryRunner.query(`DROP TABLE IF EXISTS rows`);
     await queryRunner.query(`DROP INDEX IF EXISTS idx_tables_project_id`);
     await queryRunner.query(`DROP TABLE IF EXISTS tables`);
   }

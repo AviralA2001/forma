@@ -9,7 +9,7 @@ export interface Table {
   project_id: string;
   name: string;
   columns: TableColumn[];
-  row_count: number;
+  row_count?: number | null;
   created_at: Date;
   updated_at: Date;
 }

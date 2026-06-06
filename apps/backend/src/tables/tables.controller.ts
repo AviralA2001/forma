@@ -19,7 +19,7 @@ import { TableResponseDto } from './dto/table-response.dto';
 import { TableDetailResponseDto } from './dto/table-detail-response.dto';
 
 // TODO: Replace with actual authenticated user when auth is implemented
-const PLACEHOLDER_OWNER_ID = '550e8400-e29b-41d4-a716-446655440000';
+const PLACEHOLDER_org_id = '550e8400-e29b-41d4-a716-446655440000';
 
 @Controller('projects/:projectId/tables')
 export class TablesController {
@@ -55,6 +55,7 @@ export class TablesController {
   @Get()
   async getTables(@Param('projectId') projectId: string): Promise<TableResponseDto[]> {
     // TODO: Verify user owns the project
+    console.log('Fetching tables for projectId:', projectId);
 
     const tables = await this.tablesService.getTables(projectId);
     return tables.map(table => ({
@@ -108,7 +109,7 @@ export class TablesController {
     @Body() dto: RenameColumnDto,
   ): Promise<TableDetailResponseDto> {
     // TODO: Verify user owns the project and table belongs to project
-
+    
     const { table, rows } = await this.tablesService.renameColumn(tableId, columnId, dto.new_name);
     return {
       table_id: table.table_id,

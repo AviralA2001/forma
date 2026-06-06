@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import './RenameColumnModal.css';
 
 interface RenameColumnModalProps {
   isOpen: boolean;
@@ -46,13 +45,16 @@ export const RenameColumnModal: React.FC<RenameColumnModalProps> = ({
   return (
     <div className="modal-overlay">
       <div className="modal-content">
-        <h2>Rename Column</h2>
+        <div className="modal-header">
+          <h2 className="modal-title">Rename Column</h2>
+        </div>
         <div className="modal-body">
-          <div className="input-container">
-            <label htmlFor="column-name">Column Name</label>
+          <div className="input-group">
+            <label htmlFor="column-name" className="input-label">Column Name</label>
             <input
               id="column-name"
               type="text"
+              className="input"
               value={newName}
               onChange={(e) => setNewName(e.target.value)}
               disabled={isLoading}
@@ -61,18 +63,18 @@ export const RenameColumnModal: React.FC<RenameColumnModalProps> = ({
           </div>
           {error && <div className="error-message">{error}</div>}
         </div>
-        <div className="modal-actions">
+        <div className="modal-footer">
           <button
             onClick={handleClose}
             disabled={isLoading}
-            className="cancel-button"
+            className="btn btn-secondary"
           >
             Cancel
           </button>
           <button
             onClick={handleConfirm}
             disabled={isLoading || !newName.trim()}
-            className="confirm-button"
+            className="btn btn-primary"
           >
             {isLoading ? 'Renaming...' : 'Rename'}
           </button>

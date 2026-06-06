@@ -2,7 +2,6 @@ import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { ProjectsPage } from './pages/projects';
 import { ProjectWorkspace } from './pages/projects/workspace/ProjectWorkspace';
-import './App.css';
 
 function App() {
   return (

@@ -1,0 +1,125 @@
+/* Design System Tokens - Single source of truth */
+
+:root {
+  /* ===== COLORS ===== */
+
+  /* Background */
+  --color-bg-base: #f9fafb;
+  --color-bg-surface: #ffffff;
+  --color-bg-sidebar: #1e2e2d;
+  --color-bg-sidebar-hover: #2a3c3e;
+  --color-bg-subtle: #f3f4f6;
+  --color-bg-hover: #f3f4f6;
+
+  /* Border */
+  --color-border: #e5e7eb;
+  --color-border-strong: #d1d5db;
+
+  /* Text */
+  --color-text-primary: #111827;
+  --color-text-secondary: #6b7280;
+  --color-text-sidebar: #c9d1d9;
+  --color-text-sidebar-active: #ffffff;
+
+  /* Brand */
+  --color-brand: #46dae5;
+  --color-brand-hover: #38afca;
+  --color-brand-light: #cffafe;
+
+  /* Status */
+  --color-success: #16a34a;
+  --color-success-light: #dcfce7;
+  --color-error: #dc2626;
+  --color-error-light: #fee2e2;
+  --color-warning: #ea580c;
+  --color-warning-light: #fed7aa;
+
+  /* ===== TYPOGRAPHY ===== */
+
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+
+  --text-xs: 11px;
+  --text-sm: 12px;
+  --text-base: 14px;
+  --text-lg: 16px;
+  --text-xl: 18px;
+  --text-2xl: 22px;
+
+  --font-light: 400;
+  --font-medium: 500;
+  --font-semibold: 600;
+  --font-bold: 700;
+
+  --line-height-tight: 1.4;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.6;
+
+  /* ===== SPACING ===== */
+
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 12px;
+  --spacing-lg: 16px;
+  --spacing-xl: 24px;
+  --spacing-2xl: 32px;
+
+  /* ===== SIZING ===== */
+
+  --size-button-height: 36px;
+  --size-input-height: 36px;
+  --size-modal-width-sm: 400px;
+  --size-modal-width-md: 600px;
+  --size-modal-width-lg: 800px;
+
+  /* ===== BORDER RADIUS ===== */
+
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-xl: 12px;
+
+  /* ===== SHADOWS ===== */
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 1px 3px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 2px 8px rgba(0, 0, 0, 0.1);
+  --shadow-xl: 0 4px 12px rgba(0, 0, 0, 0.15);
+  --shadow-2xl: 0 10px 40px rgba(0, 0, 0, 0.15);
+
+  /* ===== TRANSITIONS ===== */
+
+  --transition-fast: 0.15s ease;
+  --transition-base: 0.2s ease;
+  --transition-slow: 0.3s ease;
+}
+
+/* Global reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: var(--color-bg-base);
+  color: var(--color-text-primary);
+  font-size: var(--text-base);
+  line-height: var(--line-height-normal);
+}
+
+code {
+  font-family: var(--font-mono);
+}
