@@ -4,7 +4,7 @@
       "type": "http",
       "url": "https://mcp.os-ai.dev/v1/mcp",
       "headers": {
-        "Authorization": "Bearer sq_G_wR3vY0_VdqtkCm91zZDCG4RET8zTTivptdE2acJzQ"
+        "Authorization": ""
       }
     }
   }
