@@ -131,6 +131,11 @@
   color: var(--color-success);
 }
 
+.status-closed {
+  background: var(--color-bg-subtle);
+  color: var(--color-text-secondary);
+}
+
 .workspace-publish-button {
   padding: 8px 16px;
   background: var(--color-brand);

@@ -143,7 +143,7 @@ Focus ring on inputs: border `--color-brand`, shadow `0 0 0 3px var(--color-bran
 
 ### Badge
 
-- **Variants:** `badge-default`, `badge-primary`, `badge-success`, `badge-error`, `badge-warning`. Project status uses `status-badge` plus `status-draft` or `status-published`.
+- **Variants:** `badge-default`, `badge-primary`, `badge-success`, `badge-error`, `badge-warning`. Project status uses `status-badge` plus `status-draft`, `status-published`, or `status-closed`. Closed uses the same treatment as draft.
 - **States:** static.
 - **Props:** label, variant.
 - **Usage rules:** Draft is the subtle badge. Published is the success badge. Status text is the status word, capitalised.
@@ -213,6 +213,13 @@ Focus ring on inputs: border `--color-brand`, shadow `0 0 0 3px var(--color-bran
 
 ## Patterns
 
+### Tooltip
+
+- **Variants:** one. Dark surface, primary-on-dark text, placed above the control.
+- **States:** hidden, visible.
+- **Props:** lines of text.
+- **Usage rules:** Shown on hover and on keyboard focus of a disabled control. One line per unmet condition. Not used for errors that already have an `error-banner`.
+
 ### Page shell
 
 Project list is a page heading plus one primary button, then either loading, an error banner, an empty state, or a grid of cards.
@@ -225,4 +232,4 @@ One text field, Cancel, and a primary confirm. Enter submits. Escape or overlay 
 
 ### Table tabs
 
-One tab per table. The active tab is selected. Each tab has a menu: Rename, Reupload, Delete. A "+" tab opens upload. Rename, re-upload, and delete use the modal pattern. Delete uses the destructive button.
+One tab per table. The active tab is selected. The tab label is edited in place with the same input, Enter, blur, and Escape behavior as the workspace title. Each tab has a menu: Reupload, Delete. A "+" tab opens upload. Re-upload and delete use the modal pattern. Delete uses the destructive button. Column rename stays the header pencil and its modal.

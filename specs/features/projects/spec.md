@@ -73,7 +73,7 @@ Delete removes the project row. The migration declares `ON DELETE CASCADE` from 
 - [ ] Clicking a card opens that workspace and loads Tables.
 - [ ] Editing the workspace title persists the new name and shows it after reload.
 - [ ] Clearing the title and leaving the field keeps the previous name.
-- [ ] Publish leaves `status` as `draft`.
+- [ ] Publish leaves `status` as `draft`. Current build only. The open phase 1 behavior is in [finish phases 1 and 2](../remaining-mvp/spec.md) FR-NQPLAN-001 through FR-NQPLAN-007.
 - [ ] Master Table, Users, and Audit show "coming soon".
 - [ ] `DELETE /projects/:id` removes a draft project and returns 400 for a project whose status is already `published`.
 - [ ] A project id outside the caller's organisation returns 404 on get, update, and delete.

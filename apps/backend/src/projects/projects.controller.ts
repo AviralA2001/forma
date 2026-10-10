@@ -22,6 +22,21 @@ export class ProjectsController {
     return this.projectsService.getProjects(user.org_id);
   }
 
+  @Post(':id/publish')
+  async publishProject(@CurrentUser() user: any, @Param('id') projectId: string): Promise<ProjectResponseDto> {
+    return this.projectsService.publishProject(projectId, user.org_id);
+  }
+
+  @Post(':id/unpublish')
+  async unpublishProject(@CurrentUser() user: any, @Param('id') projectId: string): Promise<ProjectResponseDto> {
+    return this.projectsService.unpublishProject(projectId, user.org_id);
+  }
+
+  @Post(':id/close')
+  async closeProject(@CurrentUser() user: any, @Param('id') projectId: string): Promise<ProjectResponseDto> {
+    return this.projectsService.closeProject(projectId, user.org_id);
+  }
+
   @Get(':id')
   async getProject(@CurrentUser() user: any, @Param('id') projectId: string): Promise<ProjectResponseDto> {
     return this.projectsService.getProject(projectId, user.org_id);

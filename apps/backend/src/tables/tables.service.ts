@@ -1,4 +1,5 @@
 import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
+import { parse } from 'csv-parse/sync';
 import { TablesRepository } from './tables.repository';
 import { TableColumn, Table, TableRow } from './types';
 import { v4 as uuidv4 } from 'uuid';
@@ -93,7 +94,7 @@ export class TablesService {
     }
 
     // Check if table is referenced in master table
-    const isReferenced = await this.tablesRepository.isTableReferencedInMasterTable(tableId);
+    const isReferenced = await this.tablesRepository.isTableReferencedInMasterTable(table.project_id, tableId);
     if (isReferenced) {
       throw new BadRequestException('Cannot delete table that is referenced in master table');
     }
@@ -137,15 +138,18 @@ export class TablesService {
   }
 
   private parseCSV(csvContent: string): { headers: string[]; rows: string[][] } {
-    const lines = csvContent.split('\n').filter(line => line.trim());
-    if (lines.length === 0) {
+    const records = parse(csvContent.replace(/^\uFEFF/, ''), {
+      columns: false,
+      skip_empty_lines: true,
+      trim: true,
+      relax_column_count: true,
+    }) as string[][];
+
+    if (records.length === 0) {
       throw new BadRequestException('CSV file is empty');
     }
 
-    // Simple CSV parser - assumes no quoted fields with commas
-    const headers = lines[0].split(',').map(h => h.trim());
-    const rows = lines.slice(1).map(line => line.split(',').map(cell => cell.trim()));
-
+    const [headers, ...rows] = records;
     return { headers, rows };
   }
 

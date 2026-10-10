@@ -1,12 +1,12 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { Connection, Repository } from 'typeorm';
-import { v4 as uuidv4 } from 'uuid';
 import { Row } from './entities/row.entity';
 import { Table } from './entities/table.entity'
-import { takeLast } from 'rxjs';
+import { masterTableReferences } from '../projects/publish-conditions';
 
 @Injectable()
 export class TablesRepository {
+  private readonly logger = new Logger(TablesRepository.name);
   private readonly table_repository: Repository<Table>;
   private readonly row_repository: Repository<Row>;
 
@@ -102,9 +102,19 @@ export class TablesRepository {
     });
   }
 
-  async isTableReferencedInMasterTable(tableId: string): Promise<boolean> {
-    // This will be implemented when master tables are built
-    // For now, return false
-    return false;
+  async isTableReferencedInMasterTable(projectId: string, tableId: string): Promise<boolean> {
+    try {
+      const rows: { columns: unknown; joins: unknown }[] = await this.connection.query(
+        `SELECT columns, joins FROM master_tables WHERE project_id = $1 AND status = 'active'`,
+        [projectId]
+      );
+      return rows.some((row) => masterTableReferences(row.columns, row.joins, tableId));
+    } catch (error) {
+      this.logger.error(`Query failed for master_tables: ${error}`);
+      if ((error as { code?: string }).code === '42P01') {
+        return false;
+      }
+      throw error;
+    }
   }
 }

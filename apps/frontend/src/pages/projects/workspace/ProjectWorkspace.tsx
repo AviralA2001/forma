@@ -15,6 +15,8 @@ export const ProjectWorkspace: React.FC = () => {
   const [activeSection, setActiveSection] = useState<'tables' | 'master-table' | 'users' | 'audit'>('tables');
   const [isEditingName, setIsEditingName] = useState(false);
   const [editedName, setEditedName] = useState('');
+  const [actionError, setActionError] = useState<string | null>(null);
+  const [actionPending, setActionPending] = useState<'publish' | 'unpublish' | null>(null);
 
   const loadProject = useCallback(async () => {
     try {
@@ -61,9 +63,20 @@ export const ProjectWorkspace: React.FC = () => {
     }
   };
 
-  const handlePublish = () => {
-    // TODO: Implement publish logic
-    console.log('Publishing project:', project?.project_id);
+  const handleLifecycle = async (action: 'publish' | 'unpublish') => {
+    if (!project) return;
+    try {
+      setActionPending(action);
+      setActionError(null);
+      await projectsApi.postProjectAction(project.project_id, action);
+      await loadProject();
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Failed to update project';
+      setActionError(message);
+      console.error(err);
+    } finally {
+      setActionPending(null);
+    }
   };
 
   if (isLoading) {
@@ -117,10 +130,41 @@ export const ProjectWorkspace: React.FC = () => {
             {project.status.charAt(0).toUpperCase() + project.status.slice(1)}
           </span>
         </div>
-        <button className="workspace-publish-button" onClick={handlePublish}>
-          Publish
-        </button>
+        {project.status !== 'closed' && (
+          <div className="publish-action">
+            <button
+              className={`btn ${
+                project.status === 'published'
+                  ? 'btn-destructive'
+                  : project.publish_conditions && project.publish_conditions.length > 0
+                    ? 'btn-secondary'
+                    : 'btn-primary'
+              }`}
+              disabled={
+                actionPending !== null ||
+                (project.status === 'draft' && !!project.publish_conditions && project.publish_conditions.length > 0)
+              }
+              onClick={() => handleLifecycle(project.status === 'published' ? 'unpublish' : 'publish')}
+            >
+              {actionPending === 'publish'
+                ? 'Publishing...'
+                : actionPending === 'unpublish'
+                  ? 'Unpublishing...'
+                  : project.status === 'published'
+                    ? 'Unpublish'
+                    : 'Publish'}
+            </button>
+            {project.status === 'draft' && project.publish_conditions && project.publish_conditions.length > 0 && (
+              <div className="publish-tooltip" role="tooltip">
+                {project.publish_conditions.map((condition) => (
+                  <p key={condition}>{condition}</p>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
       </div>
+      {actionError && <div className="error-banner">{actionError}</div>}
 
       <div className="workspace-breadcrumbs">
         <a href="/projects" className="breadcrumb-link">Projects</a>

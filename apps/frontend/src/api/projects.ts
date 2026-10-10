@@ -41,4 +41,23 @@ export const projectsApi = {
     });
     if (!response.ok) throw new Error('Failed to delete project');
   },
+
+  async publishProject(id: string): Promise<Project> {
+    return this.postProjectAction(id, 'publish');
+  },
+
+  async unpublishProject(id: string): Promise<Project> {
+    return this.postProjectAction(id, 'unpublish');
+  },
+
+  async postProjectAction(id: string, action: 'publish' | 'unpublish'): Promise<Project> {
+    const response = await fetch(`${API_URL}/projects/${id}/${action}`, { method: 'POST' });
+    if (!response.ok) {
+      const body = await response.json().catch(() => ({}));
+      const error = new Error(body.message || `Failed to ${action} project`) as Error & { conditions?: string[] };
+      error.conditions = body.conditions;
+      throw error;
+    }
+    return response.json();
+  },
 };

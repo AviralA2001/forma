@@ -1,10 +1,12 @@
-export type ProjectStatus = 'draft' | 'published'
+export type ProjectStatus = 'draft' | 'published' | 'closed'
 
 export interface Project {
   project_id: string
   name: string
   owner_id: string
+  org_id?: string
   status: ProjectStatus
+  publish_conditions?: string[]
   created_at: string
   updated_at: string
 }

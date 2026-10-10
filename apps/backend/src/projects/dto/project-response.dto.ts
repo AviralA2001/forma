@@ -11,7 +11,10 @@ export class ProjectResponseDto {
   org_id: string;
 
   @Expose()
-  status: 'draft' | 'published';
+  status: 'draft' | 'published' | 'closed';
+
+  @Expose()
+  publish_conditions?: string[];
 
   @Expose()
   created_at: Date;

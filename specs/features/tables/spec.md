@@ -114,6 +114,10 @@ Prefix: `/projects/:projectId/tables`. Multipart field name for files: `file`.
 - Blocking delete because a master table uses the table
 - Checking that `:projectId` owns `:tableId`
 
+## Next behavior, not in this build
+
+The open phase 2 tasks are specified in [finish phases 1 and 2](../remaining-mvp/spec.md): `csv-parse` and `multer` (FR-NQPLAN-008), blocking delete when a master table references the table (FR-NQPLAN-009), and renaming the tab in place (FR-NQPLAN-010). Until that spec is built, the behavior above is what the product does.
+
 ## Gaps left open
 
 - `projectId` on every table route except upload is unused for authorization or ownership.

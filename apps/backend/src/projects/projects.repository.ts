@@ -40,6 +40,15 @@ export class ProjectsRepository {
     return this.findOne(projectId, orgId);
   }
 
+  async updateStatus(
+    projectId: string,
+    orgId: string,
+    status: Project['status']
+  ): Promise<Project> {
+    await this.repository.update({ project_id: projectId, org_id: orgId }, { status });
+    return this.findOne(projectId, orgId);
+  }
+
   async delete(projectId: string, orgId: string): Promise<void> {
     await this.repository.delete({
       project_id: projectId,

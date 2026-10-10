@@ -152,6 +152,13 @@ textarea.input-error:focus {
   color: var(--color-text-secondary);
 }
 
+.formula-input {
+  height: 40px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  background: #f6f8fa;
+}
+
 /* ===== COMBOBOX ===== */
 
 .combobox {
@@ -427,6 +434,39 @@ textarea.input-error:focus {
 .status-published {
   background: var(--color-success-light);
   color: var(--color-success);
+}
+
+.status-closed {
+  background: var(--color-bg-subtle);
+  color: var(--color-text-secondary);
+}
+
+.publish-action {
+  position: relative;
+}
+
+.publish-tooltip {
+  display: none;
+  position: absolute;
+  right: 0;
+  bottom: calc(100% + 8px);
+  min-width: 180px;
+  padding: 8px 12px;
+  background: var(--color-bg-sidebar);
+  color: var(--color-text-sidebar-active);
+  border-radius: var(--radius-md);
+  font-size: var(--text-sm);
+  line-height: 1.4;
+  z-index: 20;
+}
+
+.publish-action:hover .publish-tooltip,
+.publish-action:focus-within .publish-tooltip {
+  display: block;
+}
+
+.publish-tooltip p {
+  margin: 0;
 }
 
 /* ===== TOGGLE ===== */

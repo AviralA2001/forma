@@ -1,11 +1,10 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { TableResponse, TableDetailResponse, tablesApi } from '../../api/tables';
 import { projectsApi } from '../../api/projects';
 import { Project } from '@forma/shared';
 import { TableDetail } from './components/TableDetail';
 import { UploadTableModal } from './components/UploadTableModal';
-import { RenameTableModal } from './components/RenameTableModal';
 import { RenameColumnModal } from './components/RenameColumnModal';
 import { DeleteTableModal } from './components/DeleteTableModal';
 import './TablesPage.css';
@@ -27,14 +26,15 @@ export const TablesPage: React.FC<TablesPageProps> = ({ project: propProject }) 
 
   // Modal states
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
-  const [isRenameTableModalOpen, setIsRenameTableModalOpen] = useState(false);
   const [isRenameColumnModalOpen, setIsRenameColumnModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   // Modal data
   const [uploadingTable, setUploadingTable] = useState(false);
-  const [renamingTable, setRenamingTable] = useState(false);
   const [renamingColumn, setRenamingColumn] = useState(false);
+  const [editingTableId, setEditingTableId] = useState<string | null>(null);
+  const [editingName, setEditingName] = useState('');
+  const cancelInlineRenameRef = useRef(false);
   const [deletingTable, setDeletingTable] = useState(false);
   const [currentTableId, setCurrentTableId] = useState<string>('');
   const [currentTableName, setCurrentTableName] = useState<string>('');
@@ -123,29 +123,39 @@ export const TablesPage: React.FC<TablesPageProps> = ({ project: propProject }) 
     }
   };
 
-  const handleRenameTable = async (newName: string) => {
-    try {
-      setRenamingTable(true);
-      await tablesApi.renameTable(getCurrentProjectId()!, currentTableId, newName);
+  const startInlineRename = (tableId: string, tableName: string) => {
+    setEditingTableId(tableId);
+    setEditingName(tableName);
+  };
 
-      // Update the table in the list
+  const cancelInlineRename = () => {
+    cancelInlineRenameRef.current = true;
+    setEditingTableId(null);
+  };
+
+  const saveInlineRename = async (tableId: string, previousName: string) => {
+    if (cancelInlineRenameRef.current) {
+      cancelInlineRenameRef.current = false;
+      return;
+    }
+    const nextName = editingName.trim();
+    setEditingTableId(null);
+    if (!nextName || nextName === previousName) {
+      return;
+    }
+    try {
+      await tablesApi.renameTable(getCurrentProjectId()!, tableId, nextName);
       setTables(tables.map(table =>
-        table.table_id === currentTableId
-          ? { ...table, name: newName }
+        table.table_id === tableId
+          ? { ...table, name: nextName }
           : table
       ));
-
-      // Update selected table if it's the current one
-      if (selectedTable && selectedTable.table_id === currentTableId) {
-        setSelectedTable({ ...selectedTable, name: newName });
+      if (selectedTable && selectedTable.table_id === tableId) {
+        setSelectedTable({ ...selectedTable, name: nextName });
       }
-
-      setIsRenameTableModalOpen(false);
     } catch (err) {
       setError('Failed to rename table');
       console.error(err);
-    } finally {
-      setRenamingTable(false);
     }
   };
 
@@ -214,13 +224,6 @@ export const TablesPage: React.FC<TablesPageProps> = ({ project: propProject }) 
     } finally {
       setUploadingTable(false);
     }
-  };
-
-  // Modal handlers
-  const openRenameTableModal = (tableId: string, tableName: string) => {
-    setCurrentTableId(tableId);
-    setCurrentTableName(tableName);
-    setIsRenameTableModalOpen(true);
   };
 
   const openRenameColumnModal = (columnId: string, columnName: string) => {
@@ -312,12 +315,44 @@ export const TablesPage: React.FC<TablesPageProps> = ({ project: propProject }) 
                     key={table.table_id}
                     className={`tab ${selectedTable?.table_id === table.table_id ? 'active' : ''}`}
                   >
-                    <button
-                      className="tab-button"
-                      onClick={() => handleTableClick(table.table_id)}
-                    >
-                      {table.name}
-                    </button>
+                    {editingTableId === table.table_id ? (
+                      <input
+                        className="workspace-title-input"
+                        value={editingName}
+                        autoFocus
+                        onClick={(e) => e.stopPropagation()}
+                        onChange={(e) => setEditingName(e.target.value)}
+                        onBlur={() => saveInlineRename(table.table_id, table.name)}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') {
+                            e.currentTarget.blur();
+                          }
+                          if (e.key === 'Escape') {
+                            e.preventDefault();
+                            cancelInlineRename();
+                          }
+                        }}
+                      />
+                    ) : (
+                      <button
+                        className="tab-button"
+                        onClick={() => {
+                          if (selectedTable?.table_id === table.table_id) {
+                            startInlineRename(table.table_id, table.name);
+                          } else {
+                            handleTableClick(table.table_id);
+                          }
+                        }}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter' && selectedTable?.table_id === table.table_id) {
+                            e.preventDefault();
+                            startInlineRename(table.table_id, table.name);
+                          }
+                        }}
+                      >
+                        {table.name}
+                      </button>
+                    )}
                     <div className="tab-menu">
                       <button
                         className="tab-menu-button"
@@ -330,14 +365,6 @@ export const TablesPage: React.FC<TablesPageProps> = ({ project: propProject }) 
                       </button>
                       {openDropdownId === table.table_id && (
                         <div className="tab-dropdown">
-                          <button
-                            onClick={() => {
-                              openRenameTableModal(table.table_id, table.name);
-                              setOpenDropdownId(null);
-                            }}
-                          >
-                            Rename
-                          </button>
                           <button
                             onClick={() => {
                               openReuploadModal(table.table_id);
@@ -376,7 +403,7 @@ export const TablesPage: React.FC<TablesPageProps> = ({ project: propProject }) 
               <div className="table-view">
                 <TableDetail
                   tableData={selectedTable}
-                  onRenameTable={(currentName) => openRenameTableModal(selectedTable.table_id, currentName)}
+                  onRenameTable={() => startInlineRename(selectedTable.table_id, selectedTable.name)}
                   onRenameColumn={openRenameColumnModal}
                   onDeleteTable={() => openDeleteModal(selectedTable.table_id, selectedTable.name)}
                   onReuploadTable={() => openReuploadModal(selectedTable.table_id)}
@@ -393,14 +420,6 @@ export const TablesPage: React.FC<TablesPageProps> = ({ project: propProject }) 
         onClose={() => setIsUploadModalOpen(false)}
         onConfirm={isReupload ? handleReuploadTable : handleUploadTable}
         isLoading={uploadingTable}
-      />
-
-      <RenameTableModal
-        isOpen={isRenameTableModalOpen}
-        onClose={() => setIsRenameTableModalOpen(false)}
-        onConfirm={handleRenameTable}
-        currentName={currentTableName}
-        isLoading={renamingTable}
       />
 
       <RenameColumnModal
