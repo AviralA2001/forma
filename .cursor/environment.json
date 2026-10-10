@@ -1,0 +1,20 @@
+{
+  "name": "forma",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "context": "."
+  },
+  "user": "ubuntu",
+  "install": "bash .cursor/scripts/install.sh",
+  "start": "bash .cursor/scripts/start.sh",
+  "terminals": [
+    {
+      "name": "backend",
+      "command": "set -a && [ -f .env.local ] && . ./.env.local; set +a && pnpm run --filter backend start:dev"
+    },
+    {
+      "name": "frontend",
+      "command": "BROWSER=none pnpm run --filter frontend start"
+    }
+  ]
+}
