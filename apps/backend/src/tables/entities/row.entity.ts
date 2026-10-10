@@ -13,8 +13,8 @@ export class Row {
     @Column({type: 'jsonb', default: []})
     data: Record<string, any>;
 
-    @Column('uuid')
-    created_by: string;
+    @Column('uuid', { nullable: true })
+    created_by: string | null;
 
     @Column({ default: 'active' })
     status: string;
